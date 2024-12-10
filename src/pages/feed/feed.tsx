@@ -1,6 +1,7 @@
 import {
   fetchFeedAction,
   fetchIngredientsAction,
+  selectFeedLoading,
   selectFeedOrders
 } from '@slices';
 import { Preloader } from '@ui';
@@ -11,6 +12,7 @@ import { useDispatch, useSelector } from '../../services/store';
 
 export const Feed: FC = () => {
   const orders: TOrder[] = useSelector(selectFeedOrders);
+  const isLoading = useSelector(selectFeedLoading);
   const dispatch = useDispatch();
 
   const getFeeds = () => {
@@ -19,10 +21,12 @@ export const Feed: FC = () => {
   };
 
   useEffect(() => {
-    getFeeds();
+    if (!orders.length) {
+      getFeeds();
+    }
   }, []);
 
-  if (!orders.length) {
+  if (!orders.length || isLoading) {
     return <Preloader />;
   }
 

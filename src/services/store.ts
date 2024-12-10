@@ -1,6 +1,7 @@
 import { combineSlices, configureStore } from '@reduxjs/toolkit';
 
 import {
+  authReducer,
   constructorReducer,
   feedReducer,
   ingredientsReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineSlices({
   ingredients: ingredientsReducer,
   burgerConstructor: constructorReducer,
   orders: ordersReducer,
-  feed: feedReducer
+  feed: feedReducer,
+  auth: authReducer
 });
 
 const store = configureStore({

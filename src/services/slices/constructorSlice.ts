@@ -41,6 +41,10 @@ const constructorSlice = createSlice({
       const temp = state.ingredients[first];
       state.ingredients[first] = state.ingredients[second];
       state.ingredients[second] = temp;
+    },
+    clearConstructor: (state) => {
+      state.bun = null;
+      state.ingredients = [];
     }
   },
   selectors: {
@@ -52,8 +56,12 @@ const constructorSlice = createSlice({
 export const { selectConstructorBun, selectConstructorIngredients } =
   constructorSlice.selectors;
 
-export const { addIngredient, removeIngredient, swapIngredient } =
-  constructorSlice.actions;
+export const {
+  addIngredient,
+  removeIngredient,
+  swapIngredient,
+  clearConstructor
+} = constructorSlice.actions;
 
 export const selectConstructorItems = createSelector(
   [selectConstructorBun, selectConstructorIngredients],

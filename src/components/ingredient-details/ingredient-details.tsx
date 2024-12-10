@@ -1,7 +1,7 @@
-import { selectIngredients } from '@slices';
-import { FC, useMemo } from 'react';
+import { fetchIngredientsAction, selectIngredients } from '@slices';
+import { FC, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from '../../services/store';
+import { useDispatch, useSelector } from '../../services/store';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
 import { Preloader } from '../ui/preloader';
 
@@ -12,6 +12,13 @@ export const IngredientDetails: FC = () => {
     () => ingredients.find((i) => i._id === params.id),
     [ingredients]
   );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!ingredients.length) {
+      dispatch(fetchIngredientsAction());
+    }
+  }, [ingredients]);
 
   if (!ingredientData) {
     return <Preloader />;

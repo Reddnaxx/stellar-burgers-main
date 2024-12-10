@@ -2,7 +2,8 @@ import {
   fetchIngredientsAction,
   fetchOrderByIdAction,
   selectIngredients,
-  selectOrderModalData
+  selectOrderModalData,
+  selectOrderModalRequest
 } from '@slices';
 import { TIngredient } from '@utils-types';
 import { FC, useEffect, useMemo } from 'react';
@@ -17,6 +18,7 @@ export const OrderInfo: FC = () => {
 
   /** TODO: взять переменные orderData и ingredients из стора */
   const orderData = useSelector(selectOrderModalData);
+  const isLoading = useSelector(selectOrderModalRequest);
 
   const ingredients: TIngredient[] = useSelector(selectIngredients);
 
@@ -69,7 +71,7 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (isLoading || !orderInfo) {
     return <Preloader />;
   }
 

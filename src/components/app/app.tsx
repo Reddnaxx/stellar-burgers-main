@@ -3,6 +3,7 @@ import {
   Feed,
   ForgotPassword,
   Login,
+  NotFound404,
   Profile,
   ProfileOrders,
   Register,
@@ -16,13 +17,28 @@ import {
   IngredientDetails,
   Modal,
   OrderInfo,
-  OrderInfoModal
+  OrderInfoModal,
+  withPrivateRoute
 } from '@components';
+import { selectIsAuth, tokenAction } from '@slices';
+import { useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from '../../services/store';
+import { getCookie } from '../../utils/cookie';
 
 const App = () => {
   const location = useLocation();
   const backgroundLocation = location.state?.background;
+  const dispatch = useDispatch();
+  const isAuth = useSelector(selectIsAuth);
+
+  useEffect(() => {
+    const token = getCookie('accessToken');
+
+    if (token && !isAuth) {
+      dispatch(tokenAction());
+    }
+  });
 
   return (
     <div className={styles.app}>
@@ -33,16 +49,28 @@ const App = () => {
           <Route index element={<Feed />} />
           <Route path=':number' element={<OrderInfo />} />
         </Route>
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
-        <Route path='/profile' element={<Profile />}>
-          <Route path='orders' element={<ProfileOrders />}>
-            <Route path=':number' element={<OrderInfo />} />
+        <Route path='/login' element={withPrivateRoute(<Login />, true)} />
+        <Route
+          path='/register'
+          element={withPrivateRoute(<Register />, true)}
+        />
+        <Route
+          path='/forgot-password'
+          element={withPrivateRoute(<ForgotPassword />, true)}
+        />
+        <Route
+          path='/reset-password'
+          element={withPrivateRoute(<ResetPassword />, true)}
+        />
+        <Route path='/profile'>
+          <Route index element={withPrivateRoute(<Profile />)} />
+          <Route path='orders'>
+            <Route index element={withPrivateRoute(<ProfileOrders />)} />
+            <Route path=':number' element={withPrivateRoute(<OrderInfo />)} />
           </Route>
         </Route>
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route path='*' element={<NotFound404 />} />
       </Routes>
 
       {backgroundLocation && (
@@ -56,7 +84,10 @@ const App = () => {
             }
           />
           <Route path='/feed/:number' element={<OrderInfoModal />} />
-          <Route path='/profile/orders/:number' element={<OrderInfoModal />} />
+          <Route
+            path='/profile/orders/:number'
+            element={withPrivateRoute(<OrderInfoModal />)}
+          />
         </Routes>
       )}
     </div>

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { selectFeed, selectFeedLoading, selectFeedOrders } from '@slices';
+import { selectFeed, selectFeedOrders } from '@slices';
 import { Preloader } from '@ui';
 import { TOrder } from '@utils-types';
 import { useSelector } from '../../services/store';
@@ -16,13 +16,12 @@ export const FeedInfo: FC = () => {
   /** TODO: взять переменные из стора */
   const orders: TOrder[] = useSelector(selectFeedOrders);
   const feed = useSelector(selectFeed);
-  const isLoading = useSelector(selectFeedLoading);
 
   const readyOrders = getOrders(orders, 'done');
 
   const pendingOrders = getOrders(orders, 'pending');
 
-  if (!feed || isLoading) {
+  if (!feed) {
     return <Preloader />;
   }
 
